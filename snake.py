@@ -7,7 +7,7 @@ class Snake():
         self.length = 1
         self.positions = [((screen_width // 2), (screen_height // 2))]
         self.direction = random.choice([up, down, left, right])
-        self.color = (0, 255, 0) 
+        self.color = (0, 255, 0)  # Bright green for all segments
         self.score = 0
 
     def get_head_position(self):
@@ -22,8 +22,12 @@ class Snake():
     def move(self):
         cur = self.get_head_position()
         x, y = self.direction
-        new = (((cur[0] + (x * gridsize)) % screen_width), (cur[1] + (y * gridsize)) % screen_height)
-        if len(self.positions) > 2 and new in self.positions[2:]:
+        new = (cur[0] + (x * gridsize), cur[1] + (y * gridsize))
+
+        # Check for collision with the edges
+        if new[0] < 0 or new[0] >= screen_width or new[1] < 0 or new[1] >= screen_height:
+            self.reset()
+        elif len(self.positions) > 2 and new in self.positions[2:]:  # Check for collision with itself
             self.reset()
         else:
             self.positions.insert(0, new)
@@ -68,7 +72,7 @@ class Food():
         pygame.draw.circle(surface, self.color, (self.position[0] + gridsize // 2, self.position[1] + gridsize // 2), gridsize // 2)
 
 def drawGrid(surface):
-    surface.fill((0, 0, 0)) 
+    surface.fill((0, 0, 0))  # Set background to black
 
 screen_width = 480
 screen_height = 480
