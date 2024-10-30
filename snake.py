@@ -7,7 +7,7 @@ class Snake():
         self.length = 1
         self.positions = [((screen_width // 2), (screen_height // 2))]
         self.direction = random.choice([up, down, left, right])
-        self.color = (0, 255, 0)  # Bright green for all segments
+        self.color = (0, 255, 0) 
         self.score = 0
 
     def get_head_position(self):
@@ -24,15 +24,18 @@ class Snake():
         x, y = self.direction
         new = (cur[0] + (x * gridsize), cur[1] + (y * gridsize))
 
-        # Check for collision with the edges
+       
         if new[0] < 0 or new[0] >= screen_width or new[1] < 0 or new[1] >= screen_height:
             self.reset()
-        elif len(self.positions) > 2 and new in self.positions[2:]:  # Check for collision with itself
+            return False 
+        elif len(self.positions) > 2 and new in self.positions[2:]: 
             self.reset()
+            return False  
         else:
             self.positions.insert(0, new)
             if len(self.positions) > self.length:
                 self.positions.pop()
+            return True 
 
     def reset(self):
         self.length = 1
@@ -72,8 +75,25 @@ class Food():
         pygame.draw.circle(surface, self.color, (self.position[0] + gridsize // 2, self.position[1] + gridsize // 2), gridsize // 2)
 
 def drawGrid(surface):
-    surface.fill((0, 0, 0))  # Set background to black
+    surface.fill((0, 0, 0))
 
+def game_over_screen(surface, font):
+    game_over_text = font.render("Game Over", True, (255, 0, 0))
+    continue_text = font.render("Press any button to continue", True, (255, 255, 255))
+    surface.blit(game_over_text, (screen_width // 2 - game_over_text.get_width() // 2, screen_height // 2 - 30))
+    surface.blit(continue_text, (screen_width // 2 - continue_text.get_width() // 2, screen_height // 2 + 10))
+    pygame.display.update()
+    
+    wait_for_keypress()
+
+def wait_for_keypress():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                return
 screen_width = 480
 screen_height = 480
 
@@ -104,14 +124,21 @@ def main():
         clock.tick(10)
         snake.handle_keys()
         drawGrid(surface)
-        snake.move()
+        
+        alive = snake.move()
+        if not alive:
+            game_over_screen(screen, myfont)
+            snake = Snake()  
+
         if snake.get_head_position() == food.position:
             snake.length += 1
             snake.score += 1
             food.randomize_position()
+            
         snake.draw(surface)
         food.draw(surface)
         screen.blit(surface, (0, 0))
+        
         text = myfont.render("Score {0}".format(snake.score), 1, (255, 255, 255))
         screen.blit(text, (5, 10))
         pygame.display.update()
