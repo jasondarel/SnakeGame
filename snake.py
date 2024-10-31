@@ -121,7 +121,7 @@ def main():
     myfont = pygame.font.SysFont("monospace", 16)
 
     while True:
-        clock.tick(10)
+        clock.tick(5)
         snake.handle_keys()
         drawGrid(surface)
         
