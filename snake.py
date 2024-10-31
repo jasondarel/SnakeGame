@@ -6,7 +6,7 @@ class Snake():
     def __init__(self):
         self.length = 1
         self.positions = [((screen_width // 2), (screen_height // 2))]
-        self.direction = random.choice([up, down, left, right])
+        self.direction = up
         self.color = (0, 255, 0) 
         self.score = 0
 
@@ -40,7 +40,7 @@ class Snake():
     def reset(self):
         self.length = 1
         self.positions = [((screen_width // 2), (screen_height // 2))]
-        self.direction = random.choice([up, down, left, right])
+        self.direction = up
         self.score = 0
 
     def draw(self, surface):
@@ -53,13 +53,13 @@ class Snake():
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.turn(up)
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.turn(down)
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.turn(left)
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.turn(right)
 
 class Food():
